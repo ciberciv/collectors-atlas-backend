@@ -1,0 +1,11 @@
+{
+  "name": "collection-manager-backend",
+  "version": "1.0.0",
+  "description": "Collection manager for card games",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon server.js"
+  },
+  "author": "ciberciv",
+  "license": "ISC"
+}
