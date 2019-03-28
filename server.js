@@ -2,6 +2,7 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const knex = require("knex");
+const bcrypt = require("bcrypt");
 const dbcredentials = require("./dbcredentials");
 
 const db = knex({
@@ -13,6 +14,8 @@ const db = knex({
     database : 'col-atlas'
   }
 });
+
+const saltRounds = 10;
 
 const app = express();
 
@@ -31,14 +34,35 @@ app.post("/signup", (req, res) => {
   const {username, email, password, passwordRep} = req.body;
 
   if (!username || !email || !password || !passwordRep) {
-    return res.status(400).json("Here");
+    return res.status(400).json("Fill all the data");
   }
 
-  return db.insert({name: username, password: password, id: 1}).into("users")
-    .then(user => {
-      res.json(user[0]);
-    })
-    .catch(err => res.status(400).json(err));
+  if (password != passwordRep) {
+    return res.status(400).json("Password missmatch")
+  }
+
+  const hash = bcrypt.hash(password, saltRounds).then(hash => {
+    db.transaction(trx => {
+      trx.insert({
+        email: email,
+        password: hash
+      })
+        .into("login")
+        .returning("email")
+        .then(registeredEmail => {
+          return trx("users")
+            .returning("*")
+            .insert({
+              email: registeredEmail[0],
+              username: username,
+              joined: new Date()
+            })
+            .then(user => {
+              res.json(user[0]);
+            })
+        }).then(trx.commit).catch(trx.rollback)
+    }).catch(err => res.status(400).json("Something went wrong"))
+  }).catch(err => res.status(400).json("Please, try again"));
 })
 
 app.listen(3000);
