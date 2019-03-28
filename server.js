@@ -3,6 +3,7 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 const knex = require("knex");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
 const dbcredentials = require("./dbcredentials");
 
 const db = knex({
@@ -27,7 +28,28 @@ app.get("/helloworld", (req, res) => {
 });
 
 app.post("/signin", (req, res) => {
+  const {email, password} = req.body;
 
+  if (!email || !password) {
+    return res.status(400).json("Fill all the data");
+  }
+
+  db.select("email", "password").from("login").where("email", "=", email)
+    .then(dbEntry => {
+      bcrypt.compare(password, dbEntry[0].password).then(isMatch => {
+        if (isMatch) {
+          jwt.sign({email:dbEntry[0].email}, "secret", (err, token) => {
+            if (err) {
+              return res.status(400).json("Error on generating session");
+            } else {
+              return res.status(200).json(token);
+            }
+          })
+        } else {
+          return  res.status(400).json("Wrong credentials");
+        }
+      }).catch(err => res.status(400).json("Something went wrong"))
+    }).catch(err => res.status(400).json("Wrong credentials"));
 })
 
 app.post("/signup", (req, res) => {
@@ -50,16 +72,16 @@ app.post("/signup", (req, res) => {
         .into("login")
         .returning("email")
         .then(registeredEmail => {
-          return trx("users")
-            .returning("*")
-            .insert({
+          return trx.insert({
               email: registeredEmail[0],
               username: username,
               joined: new Date()
             })
-            .then(user => {
-              res.json(user[0]);
-            })
+              .into("users")
+              .returning("*")
+              .then(user => {
+                res.json(user[0]);
+              })
         }).then(trx.commit).catch(trx.rollback)
     }).catch(err => res.status(400).json("Something went wrong"))
   }).catch(err => res.status(400).json("Please, try again"));
