@@ -4,6 +4,7 @@ const cors = require("cors");
 const knex = require("knex");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const expressjwt = require("express-jwt");
 const dbcredentials = require("./dbcredentials");
 
 const db = knex({
@@ -17,28 +18,40 @@ const db = knex({
 });
 
 const saltRounds = 10;
+const jwtKey = "secret";
 
 const app = express();
 
+const jwtCheck = expressjwt({secret: jwtKey}).unless({path: [
+  "/register",
+  "/signup",
+  "/login",
+  "/signin",
+  "/helloworld"]});
+
 app.use(bodyParser.json());
-// app.use(cors);
+app.use(cors());
+app.use(jwtCheck);
 
 app.get("/helloworld", (req, res) => {
   res.send("Hello World");
 });
 
 app.post("/signin", (req, res) => {
-  const {email, password} = req.body;
+  const {username, password} = req.body;
 
-  if (!email || !password) {
+  if (!username || !password) {
     return res.status(400).json("Fill all the data");
   }
 
-  db.select("email", "password").from("login").where("email", "=", email)
+  db.select("email").from("users").where("username", "=", username)
+    .then(fetchedEmail => {
+      return db.select("email", "password").from("login").where("email", "=", fetchedEmail[0].email)
+    })
     .then(dbEntry => {
       bcrypt.compare(password, dbEntry[0].password).then(isMatch => {
         if (isMatch) {
-          jwt.sign({email:dbEntry[0].email}, "secret", (err, token) => {
+          jwt.sign({email: dbEntry[0].email}, jwtKey, (err, token) => {
             if (err) {
               return res.status(400).json("Error on generating session");
             } else {
@@ -46,10 +59,10 @@ app.post("/signin", (req, res) => {
             }
           })
         } else {
-          return  res.status(400).json("Wrong credentials");
+          return  res.status(403).json("Wrong credentials");
         }
       }).catch(err => res.status(400).json("Something went wrong"))
-    }).catch(err => res.status(400).json("Wrong credentials"));
+    }).catch(err => res.status(403).json("Wrong credentials"));
 })
 
 app.post("/signup", (req, res) => {
