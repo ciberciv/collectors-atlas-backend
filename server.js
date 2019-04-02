@@ -33,6 +33,16 @@ app.use(bodyParser.json());
 app.use(cors());
 app.use(jwtCheck);
 
+const getUser = (token) => {
+  return jwt.verify(token, jwtKey, (err, decoded) => {
+    if (err) {
+      return false;
+    } else {
+      return decoded.email;
+    }
+  })
+}
+
 app.get("/helloworld", (req, res) => {
   res.send("Hello World");
 });
@@ -98,6 +108,60 @@ app.post("/signup", (req, res) => {
         }).then(trx.commit).catch(trx.rollback)
     }).catch(err => res.status(400).json("Something went wrong"))
   }).catch(err => res.status(400).json("Please, try again"));
+})
+
+app.put("/user/collections", (req, res) => {
+  const {id} = req.body;
+  const token = req.headers.authorization.slice(7);
+  const owner = getUser(token);
+
+  if (!owner) {
+    return res.status(400).json("Something went wrong");
+  }
+
+  return db.select("collection_ids").from("users").where("email", "=", owner)
+    .then(fetchedCollections => {
+      let collections = fetchedCollections[0].collection_ids;
+
+      collections.push(id);
+
+      return collections;
+    })
+    .then(updatedCollections => {
+      console.log(updatedCollections);
+      return db("users").where("email", "=", owner).update({
+        collection_ids: updatedCollections
+      }).returning("collection_ids")
+    })
+    .then(data => res.status(200).json(data))
+    .catch(err => res.status(400).json("Something went wrong"))
+
+})
+
+app.post("/collection", (req, res) => {
+  const {game, name} = req.body;
+  const token = req.headers.authorization.slice(7);
+  const owner = getUser(token);
+
+  if (!owner) {
+    return res.status(400).json("Something went wrong");
+  }
+
+  return db.insert({
+    game: game,
+    owner: owner,
+    name: name,
+    card_ids: []
+  })
+    .into("collections")
+    .returning("id")
+    .then(id => {
+      if (!id) {
+        return res.status(400).json("Something went wrong")
+      } else {
+        return res.status(200).json(id)
+      }
+    }).catch(err => res.status(400).json(err))
 })
 
 app.listen(3000);
