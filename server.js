@@ -22,12 +22,22 @@ const jwtKey = "secret";
 
 const app = express();
 
-const jwtCheck = expressjwt({secret: jwtKey}).unless({path: [
-  "/register",
-  "/signup",
-  "/login",
-  "/signin",
-  "/helloworld"]});
+const jwtCheck = expressjwt({
+    secret: jwtKey,
+    getToken: (req) => {
+      if (req.headers.authorization) {
+        return req.headers.authorization.slice(7);
+      } else {
+        return null;
+      }
+    }
+  }).unless({path: [
+    "/register",
+    "/signup",
+    "/login",
+    "/signin",
+    "/helloworld"
+  ]});
 
 app.use(bodyParser.json());
 app.use(cors());
@@ -38,7 +48,7 @@ const getUser = (token) => {
     if (err) {
       return false;
     } else {
-      return decoded.email;
+      return decoded.username;
     }
   })
 }
@@ -61,7 +71,7 @@ app.post("/signin", (req, res) => {
     .then(dbEntry => {
       bcrypt.compare(password, dbEntry[0].password).then(isMatch => {
         if (isMatch) {
-          jwt.sign({email: dbEntry[0].email}, jwtKey, (err, token) => {
+          jwt.sign({username: username}, jwtKey, (err, token) => {
             if (err) {
               return res.status(400).json("Error on generating session");
             } else {
@@ -119,7 +129,7 @@ app.put("/user/collections", (req, res) => {
     return res.status(400).json("Something went wrong");
   }
 
-  return db.select("collection_ids").from("users").where("email", "=", owner)
+  return db.select("collection_ids").from("users").where("username", "=", owner)
     .then(fetchedCollections => {
       let collections = fetchedCollections[0].collection_ids;
 
@@ -129,7 +139,7 @@ app.put("/user/collections", (req, res) => {
     })
     .then(updatedCollections => {
       console.log(updatedCollections);
-      return db("users").where("email", "=", owner).update({
+      return db("users").where("username", "=", owner).update({
         collection_ids: updatedCollections
       }).returning("collection_ids")
     })
@@ -144,7 +154,7 @@ app.post("/collection", (req, res) => {
   const owner = getUser(token);
 
   if (!owner) {
-    return res.status(400).json("Something went wrong");
+    return res.status(400).json("Something went wrong user");
   }
 
   return db.insert({
