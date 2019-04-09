@@ -1,9 +1,8 @@
-const {getUser} = require("../identityManagement");
+const {getUserFromRequest} = require("../identityManagement");
 const {db} = require("../database");
 
 const getUserCollections = (req, res) => {
-  const token = req.headers.authorization.slice(7);
-  const owner = getUser(token);
+  const owner = getUserFromRequest(req);
 
   if (!owner) {
     return res.status(400).json("Something went wrong");
@@ -25,8 +24,7 @@ const getUserCollections = (req, res) => {
 
 const createNewCollection = (req, res) => {
   const {game, name} = req.body;
-  const token = req.headers.authorization.slice(7);
-  const owner = getUser(token);
+  const owner = getUserFromRequest(req);
 
   if (!owner) {
     return res.status(400).json("Something went wrong");
@@ -45,7 +43,7 @@ const createNewCollection = (req, res) => {
         if (!id) {
           return res.status(400).json("Something went wrong")
         }
-        
+
         return db.select("collection_ids").from("users").where("username", "=", owner)
           .then(fetchedCollections => {
             let collections = fetchedCollections[0].collection_ids;

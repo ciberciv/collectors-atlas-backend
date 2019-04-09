@@ -3,7 +3,6 @@ const jwt = require("jsonwebtoken");
 const {jwtKey} = require("./secretValues");
 
 
-// Check for correct credentials before loading a route
 const jwtCheck = expressjwt({
     secret: jwtKey,
     getToken: (req) => {
@@ -20,19 +19,23 @@ const jwtCheck = expressjwt({
     "/signin"
   ]});
 
-// Get jwt from local storage
-const getUser = (token) => {
+const getUserFromToken = (token) => {
   return jwt.verify(token, jwtKey, (err, decoded) => {
     if (err) {
-      return false;
+      return null;
     } else {
       return decoded.username;
     }
   })
 }
 
+const getUserFromRequest = (request) => {
+  const token = request.headers.authorization.slice(7);
+  return getUserFromToken(token);
+}
+
 module.exports = {
   jwtCheck: jwtCheck,
   jwtKey: jwtKey,
-  getUser: getUser
+  getUserFromRequest: getUserFromRequest
 }
