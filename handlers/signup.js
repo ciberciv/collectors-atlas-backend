@@ -2,7 +2,7 @@ const bcrypt = require("bcrypt");
 const {db} = require("../database");
 const {saltRounds} = require("../secretValues");
 
-const post = (req, res) => {
+const createNewUser = (req, res) => {
   const {username, email, password, passwordRep} = req.body;
 
   if (!username || !email || !password || !passwordRep) {
@@ -38,5 +38,5 @@ const post = (req, res) => {
 }
 
 module.exports = {
-  post: post
+  createNewUser: createNewUser
 }

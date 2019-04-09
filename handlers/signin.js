@@ -3,7 +3,7 @@ const jwt = require("jsonwebtoken");
 const {jwtKey} = require("../identityManagement");
 const {db} = require("../database");
 
-const post = (req, res) => {
+const signInUser = (req, res) => {
   const {username, password} = req.body;
 
   if (!username || !password) {
@@ -32,5 +32,5 @@ const post = (req, res) => {
 }
 
 module.exports = {
-  post: post
+  signInUser: signInUser
 }

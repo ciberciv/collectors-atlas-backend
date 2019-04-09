@@ -4,10 +4,10 @@ const handleSignUp = require("./handlers/signup");
 const handleCollection = require("./handlers/collection");
 
 // Handlers
-app.post("/signin", (req, res) => handleSignIn.post(req, res))
-app.post("/signup", (req, res) => handleSignUp.post(req, res))
-app.put("/collection", (req, res) => handleCollection.put(req, res))
-app.get("/collection", (req, res) => handleCollection.get(req, res))
+app.post("/signin", (req, res) => handleSignIn.signInUser(req, res))
+app.post("/signup", (req, res) => handleSignUp.createNewUser(req, res))
+app.put("/collection", (req, res) => handleCollection.createNewCollection(req, res))
+app.get("/collection", (req, res) => handleCollection.getUserCollections(req, res))
 
 // Start app
 app.listen(3000);
