@@ -12,10 +12,12 @@ const signInUser = (req, res) => {
 
   db.select("email").from("users").where("username", "=", username)
     .then(fetchedEmail => {
-      return db.select("email", "password").from("login").where("email", "=", fetchedEmail[0].email)
+      return db.select("password").from("login").where("email", "=", fetchedEmail[0].email)
     })
     .then(dbEntry => {
-      bcrypt.compare(password, dbEntry[0].password).then(isMatch => {
+      const fetchedPassword = dbEntry[0].password;
+
+      bcrypt.compare(password, fetchedPassword).then(isMatch => {
         if (isMatch) {
           jwt.sign({username: username}, jwtKey, (err, token) => {
             if (err) {

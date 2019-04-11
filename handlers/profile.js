@@ -19,20 +19,18 @@ const deleteUser = (req, res) => {
       const fetchedPassword = dbEntry[0].password;
 
       bcrypt.compare(password, fetchedPassword).then(isMatch => {
-        console.log(2);
         if (isMatch) {
           return db.transaction(trx => {
             trx.from("users").where("email", "=", fetchedEmail).del()
               .then(data => {
                 return trx.from("login").where("email", "=", fetchedEmail).del();
-              }).then(trx.commit).catch(trx.rollback)
+              }).then(trx.commit).catch(trx.rollback).then(res.status(200).json("Deleted"))
           }).catch(err => res.status(400).json("Something went wrong"));
         } else {
           return res.status(403).json("Wrong password");
         }
-      }).catch(err => res.status(400).json("Whoops"))
+      }).catch(err => res.status(400).json("Something went wrong"))
     })
-    .then(res.status(200).json("Deleted"))
 }
 
 module.exports = {

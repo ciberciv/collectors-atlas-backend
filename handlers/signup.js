@@ -30,7 +30,7 @@ const createNewUser = (req, res) => {
               .into("users")
               .returning("*")
               .then(user => {
-                res.json(user[0]);
+                res.status(200).json(user[0]);
               })
         }).then(trx.commit).catch(trx.rollback)
     }).catch(err => res.status(400).json("Something went wrong"))
