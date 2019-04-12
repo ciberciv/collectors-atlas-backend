@@ -34,8 +34,7 @@ const createNewCollection = (req, res) => {
     trx.insert({
       game: game,
       owner: owner,
-      name: name,
-      card_ids: []
+      name: name
     })
       .into("collections")
       .returning("id")
