@@ -1,4 +1,4 @@
 /node_modules
 /collectorsAtlas
 
-secretValues.js
+secretValues.ts

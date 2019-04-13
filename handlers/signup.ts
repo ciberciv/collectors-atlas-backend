@@ -1,7 +1,7 @@
 import {Request, Response} from "express";
 import bcrypt from "bcrypt";
 import {db} from "../mongoDatabase";
-import saltRounds from "../secretValues";
+import {saltRounds} from "../secretValues";
 
 class SignUp {
   public createNewUser = (req : Request, res : Response) => {
@@ -15,7 +15,7 @@ class SignUp {
       return res.status(400).json("Password missmatch")
     }
   
-    bcrypt.hash(password, saltRounds).then((hash : any) => {
+    bcrypt.hash(password, saltRounds).then((hash : String) => {
       let session : any = null;
 
       return db.users.startSession()

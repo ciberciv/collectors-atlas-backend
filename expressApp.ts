@@ -3,6 +3,7 @@ import bodyParser from "body-parser";
 import cors from "cors";
 import mongoose from "mongoose";
 import SignUp from "./handlers/signup";
+import SignIn from "./handlers/signin";
 import Test from "./handlers/test";
 
 // const {jwtCheck} = require("./identityManagement");
@@ -10,6 +11,7 @@ import Test from "./handlers/test";
 class App {
   public app : any;
   public signUp : SignUp;
+  public signIn : SignIn;
   public test : Test;
 
   constructor() {
@@ -18,6 +20,7 @@ class App {
     this._setMongoConfig();
 
     this.signUp = new SignUp();
+    this.signIn = new SignIn();
     this.test = new Test();
 
 
@@ -38,6 +41,7 @@ class App {
 
   public routes() {
     this.app.post("/signup", this.signUp.createNewUser);
+    this.app.post("/signin", this.signIn.signInUser);
 
 
     // See the db
