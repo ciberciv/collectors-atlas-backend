@@ -5,6 +5,7 @@ import mongoose from "mongoose";
 import SignUp from "./handlers/signup";
 import SignIn from "./handlers/signin";
 import Test from "./handlers/test";
+import Profile from "./handlers/profile";
 
 // const {jwtCheck} = require("./identityManagement");
 
@@ -12,6 +13,7 @@ class App {
   public app : any;
   public signUp : SignUp;
   public signIn : SignIn;
+  public profile : Profile;
   public test : Test;
 
   constructor() {
@@ -21,6 +23,7 @@ class App {
 
     this.signUp = new SignUp();
     this.signIn = new SignIn();
+    this.profile = new Profile();
     this.test = new Test();
 
 
@@ -42,6 +45,7 @@ class App {
   public routes() {
     this.app.post("/signup", this.signUp.createNewUser);
     this.app.post("/signin", this.signIn.signInUser);
+    this.app.delete("/profile", this.profile.deleteUser);
 
 
     // See the db
