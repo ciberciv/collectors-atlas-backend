@@ -1,6 +1,6 @@
-const mongoose = require("mongoose");
+import { Schema } from "mongoose";
 
-const cardSchema = new mongoose.Schema({
+const cardSchema : Schema = new Schema({
     card_id: Number,
     set: String,
     rarity: String,
@@ -9,6 +9,4 @@ const cardSchema = new mongoose.Schema({
     language: String
 })
 
-module.exports = {
-    cardSchema: cardSchema
-}
+export default cardSchema;
