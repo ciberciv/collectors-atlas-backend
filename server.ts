@@ -1,6 +1,3 @@
-import {Request, Response} from "express";
-import {db} from "./mongoDatabase";
-
 import app from "./expressApp"; /*
 import handleSignIn from "./handlers/signin.js";
 import handleSignUp from "./handlers/signup.js";
