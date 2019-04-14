@@ -7,8 +7,7 @@ import SignIn from "./handlers/signin";
 import Test from "./handlers/test";
 import Profile from "./handlers/profile";
 import Collections from "./handlers/collection";
-
-// const {jwtCheck} = require("./identityManagement");
+import {jwtCheck} from "./identityManagement";
 
 class App {
   public app : any;
@@ -37,7 +36,7 @@ class App {
     // Middleware
     this.app.use(bodyParser.json());
     this.app.use(cors());
-    // this.app.use(jwtCheck);
+    this.app.use(jwtCheck);
   }
 
   private _setMongoConfig() {
