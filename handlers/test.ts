@@ -21,6 +21,46 @@ class Test {
       res.json(login);
     })
   }
+
+  public getAllCollections = (req : Request, res : Response) => {
+    db.collections.find({}, (error : Error, collection : any) => {
+      if (error) {
+        res.send(error);
+      }
+
+      res.json(collection);
+    })
+  }
+
+  public deleteAllCollections = (req : Request, res : Response) => {
+    db.collections.deleteMany({}, (error : Error) => {
+      if (error) {
+        res.send(error);
+      }
+
+      res.json("Cool");
+    })
+  }
+
+  public deleteAllUsers = (req : Request, res : Response) => {
+    db.users.deleteMany({}, (error : Error) => {
+      if (error) {
+        res.send(error);
+      }
+
+      res.json("Cool");
+    })
+  }
+
+  public deleteAllLogin = (req : Request, res : Response) => {
+    db.login.deleteMany({}, (error : Error) => {
+      if (error) {
+        res.send(error);
+      }
+
+      res.json("Cool");
+    })
+  }
 }
 
 export default Test;

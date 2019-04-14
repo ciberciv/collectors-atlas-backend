@@ -37,7 +37,7 @@ class Profile {
                 })
                 .then(() => session.commitTransaction()).catch(() => session.abortTransaction())
               } else {
-                res.json("Something went wrong")
+                res.json("Wrong credentials")
               }
             })
           })
