@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import bcrypt from "bcrypt";
 import {getUserFromRequest} from "../identityManagement";
-import {db} from "../mongoDatabase";
+import {db} from "../database";
 
 class Profile {
   public deleteUser = (req : Request, res : Response) => {

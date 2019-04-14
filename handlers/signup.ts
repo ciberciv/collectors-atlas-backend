@@ -1,6 +1,6 @@
 import {Request, Response} from "express";
 import bcrypt from "bcrypt";
-import {db} from "../mongoDatabase";
+import {db} from "../database";
 import {saltRounds} from "../secretValues";
 
 class SignUp {

@@ -2,7 +2,7 @@ import {Request, Response} from "express";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import {jwtKey} from "../secretValues";
-import {db} from "../mongoDatabase";
+import {db} from "../database";
 
 class SignIn {
   public signInUser = (req : Request, res : Response) => {

@@ -1,6 +1,6 @@
 import {Request, Response} from "express";
 import {getUserFromRequest} from "../identityManagement";
-import {db} from "../mongoDatabase";
+import {db} from "../database";
 
 class Collections {
   public getUserCollections = (req : Request, res : Response) => {

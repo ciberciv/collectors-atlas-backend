@@ -1,5 +1,5 @@
 import {Request, Response} from "express";
-import {db} from "../mongoDatabase";
+import {db} from "../database";
 
 class Test {
   public getUsers = (req : Request, res : Response) => {
