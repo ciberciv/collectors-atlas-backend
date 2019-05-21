@@ -1,5 +1,5 @@
 import {Request, Response} from "express";
-import bcrypt from "bcrypt";
+import bcrypt from "bcryptjs";
 import {db} from "../database";
 import {saltRounds} from "../secretValues";
 

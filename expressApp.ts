@@ -4,7 +4,7 @@ import cors from "cors";
 import mongoose from "mongoose";
 import SignUp from "./handlers/signup";
 import SignIn from "./handlers/signin";
-import Test from "./handlers/test";
+//import Test from "./handlers/test";
 import Profile from "./handlers/profile";
 import Collections from "./handlers/collection";
 import {jwtCheck} from "./identityManagement";
@@ -15,7 +15,7 @@ class App {
   public signIn : SignIn;
   public profile : Profile;
   public collections : Collections;
-  public test : Test;
+  //public test : Test;
 
   constructor() {
     this.app = express();
@@ -26,7 +26,7 @@ class App {
     this.signIn = new SignIn();
     this.profile = new Profile();
     this.collections = new Collections();
-    this.test = new Test();
+    //this.test = new Test();
 
 
     this.routes();
@@ -52,13 +52,13 @@ class App {
     this.app.get("/collections", this.collections.getUserCollections);
 
 
-    // See the db
+    /*// See the db
     this.app.get("/getUsers", this.test.getUsers);
     this.app.get("/getLogin", this.test.getLogin);
     this.app.get("/getCollections", this.test.getAllCollections);
     this.app.delete("/deleteAllCollections", this.test.deleteAllCollections);
     this.app.delete("/deleteAllUsers", this.test.deleteAllUsers);
-    this.app.delete("/deleteAllLogin", this.test.deleteAllLogin);
+    this.app.delete("/deleteAllLogin", this.test.deleteAllLogin);*/
   }
 }
 
